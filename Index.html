@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ຄຳນວນໂທດນັກໂທດ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            color: black;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        h2, h3 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>ຄຳນວນໂທດນັກໂທດ</h2>
+        <div>
+            <label>ວັນຖືກຈັບ:</label>
+            <input type="date" id="startDate">
+        </div>
+        <div>
+            <label>ຄິດໄລ່ເຖິງວັນທີ່:</label>
+            <input type="date" id="calculateDate">
+        </div>
+        <div>
+            <label>ຈຳນວນປີທີ່ຖືກຕັດສິນ (ປີ):</label>
+            <input type="number" id="sentenceYears" min="0">
+        </div>
+        <div>
+            <label>ຈຳນວນເດືອນ (ເດືອນ):</label>
+            <input type="number" id="sentenceMonths" min="0" max="11">
+        </div>
+        <div>
+            <label>ຈຳນວນວັນ (ວັນ):</label>
+            <input type="number" id="sentenceDays" min="0" max="30">
+        </div>
+        <div>
+            <label>ຈຳນວນໂທດທີ່ຜ່ອນ (ເດືອນ):</label>
+            <input type="number" id="reducedMonths" min="0">
+        </div>
+        <button onclick="calculateSentence()">ຄຳນວນ</button>
+        
+        <h3>ຜົນການຄຳນວນ:</h3>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function calculateSentence() {
+            let startDate = document.getElementById("startDate").value;
+            let calculateDate = document.getElementById("calculateDate").value;
+            let sentenceYears = parseInt(document.getElementById("sentenceYears").value) || 0;
+            let sentenceMonths = parseInt(document.getElementById("sentenceMonths").value) || 0;
+            let sentenceDays = parseInt(document.getElementById("sentenceDays").value) || 0;
+            let reducedMonths = parseInt(document.getElementById("reducedMonths").value) || 0;
+            
+            if (!startDate || !calculateDate) {
+                alert("ກະລຸນາໃສ່ຂໍ້ມູນທັງຫມົດ");
+                return;
+            }
+            
+            let start = new Date(startDate);
+            let end = new Date(start);
+            end.setFullYear(end.getFullYear() + sentenceYears);
+            end.setMonth(end.getMonth() + sentenceMonths - reducedMonths);
+            end.setDate(end.getDate() + sentenceDays);
+            
+            let calculateDay = new Date(calculateDate);
+            let timeServed = calculateDay - start;
+            let timeRemaining = end - calculateDay;
+            
+            let servedDate = new Date(start);
+            servedDate.setDate(servedDate.getDate() + timeServed / (1000 * 60 * 60 * 24));
+            
+            let remainingDate = new Date(calculateDay);
+            remainingDate.setDate(remainingDate.getDate() + timeRemaining / (1000 * 60 * 60 * 24));
+            
+            let servedYears = servedDate.getFullYear() - start.getFullYear();
+            let servedMonths = servedDate.getMonth() - start.getMonth();
+            let servedDays = servedDate.getDate() - start.getDate();
+            
+            if (servedDays < 0) {
+                servedMonths--;
+                servedDays += 30;
+            }
+            if (servedMonths < 0) {
+                servedYears--;
+                servedMonths += 12;
+            }
+            
+            let remainingYears = remainingDate.getFullYear() - calculateDay.getFullYear();
+            let remainingMonths = remainingDate.getMonth() - calculateDay.getMonth();
+            let remainingDays = remainingDate.getDate() - calculateDay.getDate();
+            
+            if (remainingDays < 0) {
+                remainingMonths--;
+                remainingDays += 30;
+            }
+            if (remainingMonths < 0) {
+                remainingYears--;
+                remainingMonths += 12;
+            }
+            
+            document.getElementById("result").innerHTML = 
+                "ນັກໂທດຢູ່ມາແລ້ວ: " + servedYears + " ປີ " + servedMonths + " ເດືອນ " + servedDays + " ວັນ<br>" +
+                "ເຫຼືອອີກ: " + remainingYears + " ປີ " + remainingMonths + " ເດືອນ " + remainingDays + " ວັນ<br>" +
+                "ວັນທີ່ພົ້ນໂທດ: " + end.toDateString();
+        }
+    </script>
+</body>
+</html>
